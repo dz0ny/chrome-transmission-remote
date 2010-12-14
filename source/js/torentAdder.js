@@ -35,7 +35,7 @@ function addTorrent (file) {
 		}
 	})
 }	
-function uploadTorrent (data) {
+function uploadTorrent (data, callback) {
 	var method = 'torrent-add';
 	var xhr = new XMLHttpRequest();
 	xhr.open('POST', localStorage.server + '/rpc', true, localStorage.user, localStorage.pass);
@@ -49,6 +49,7 @@ function uploadTorrent (data) {
 	        var responseJSON = JSON.parse(xhr.responseText);
 
 	        if (method === 'torrent-add') {
+	        	callback(responseJSON.result);
 	            switch (responseJSON.result) {
 	            case 'success':
 	                showBadge('add', [0, 255, 0, 255], 5000);

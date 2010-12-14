@@ -1,0 +1,11 @@
+<div id="content">
+	<p id="name" class="box one"><%= info.name %></p>
+	<p id="size" class="box one">Size: <span><%= info.total_size %></span></p>
+	<p id="coment" class="box one"><%= announce %></p>
+	<ul id="files" class="box three">
+		<li id="meta"><p id="title">Name</p><p id="title">Size</p></li>
+		<% for(var i=0; i<info.files.length; i++) {%>
+		   <li><p><%= gen_path(info.files[i].path) %></p><p><%= file_size(info.files[i].length) %></p></li>
+		<% } %>
+	</ul>
+</div>
