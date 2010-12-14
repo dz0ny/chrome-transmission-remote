@@ -9,6 +9,9 @@ var infoReader;
             text: ''
         });
     }
+    document.getElementById('dropbox').addEventListener('click',function (ev) {
+		document.getElementById('Hfile').click();
+	},false);
 })();
 
 function discard(e) {

@@ -36,7 +36,7 @@
         var xhr = new XMLHttpRequest();
         xhr.open('POST', localStorage.server + '/rpc', true, localStorage.user, localStorage.pass);
         xhr.setRequestHeader('X-Transmission-Session-Id', localStorage.sessionId);
-        if (method === 'torrent-add' && window.navigator.appVersion.indexOf("Chrome\/9.0") > 1) {
+        if (method === 'torrent-add' && typeof(new XMLHttpRequest().responseType) != "undefined") {
 			downloadTorrent(JSON.parse("{" + args + "}").filename);
         } else {
             if (typeof tag === 'undefined') {

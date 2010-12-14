@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <link rel="stylesheet" type="text/css" href="css/popup.css" />
-
+<input type="file" id="Hfile" style="visibility:hidden; position: fixed; height:0px;" onchange="addTorrent(this.files[0])">
 <div id="header">
 	<div id="global_stats">
 		Torrents: <b><span id="global_torrents"> </span></b><br />
@@ -35,7 +35,7 @@
 <ul id="menu">
 	<li onclick="chrome.tabs.create({ url: localStorage.server + '/web/' })">full web interface</li>
 </ul>
-
+<script type="text/javascript" src="js/torentAdder.js"></script>
 <script type="text/javascript" src="js/class.js"></script>
 <script type="text/javascript" src="js/popup.js"></script>
 <script type="text/javascript" src="js/events.js"></script>

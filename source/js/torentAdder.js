@@ -47,7 +47,6 @@ function uploadTorrent (data, callback) {
 	            localStorage.sessionId = xhr.getResponseHeader('X-Transmission-Session-Id');
 	        }
 	        var responseJSON = JSON.parse(xhr.responseText);
-
 	        if (method === 'torrent-add') {
 	        	callback(responseJSON.result);
 	            switch (responseJSON.result) {

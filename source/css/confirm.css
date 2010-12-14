@@ -120,7 +120,7 @@ HTML, BODY
 	white-space: nowrap;
 }
 #files li p:first-child {
-  	-webkit-box-flex: 4;
+  	-webkit-box-flex: 20;
 }
 #files li:not(:first-child) p:not(:first-child) {
 	margin: 3px -5px;

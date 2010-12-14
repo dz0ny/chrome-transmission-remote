@@ -3,10 +3,18 @@ chrome.extension.onRequest.addListener(function (request, sender) {
 	EJS.Helpers.prototype.file_size = file_size;
 	EJS.Helpers.prototype.gen_path = gen_path;
 	var total_size = 0;
-	for(var i=0; i<request.torrent.info.files.length; i++) {
-		total_size += Number(request.torrent.info.files[i].length);
-	} 
-	request.torrent.info.total_size = file_size(total_size);
+	if (request.torrent.info.files) {
+		//multiple files
+		for(var i=0; i<request.torrent.info.files.length; i++) {
+			total_size += Number(request.torrent.info.files[i].length);
+		}
+		request.torrent.info.total_size = file_size(total_size);
+	}else{
+		//single file
+		request.torrent.info.total_size = file_size(request.torrent.info.length);
+		request.torrent.info.files = [{"length" : request.torrent.info.length, "path":[request.torrent.info.name] }]
+	}
+	
 	document.title = request.torrent.info.name + " - Adding torrent";
 	document.getElementById('holder').innerHTML = new EJS({url: 'template/confirm.ejs'}).render(request.torrent);
 	document.getElementById('confirm').addEventListener('click',function (ev) {

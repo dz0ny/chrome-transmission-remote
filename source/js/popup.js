@@ -185,6 +185,11 @@ function refreshPopup() {
 
 	refresh = setTimeout(refreshPopup, 3000);
 	document.getElementById('basket').addEventListener('click',function (ev) {
-		chrome.windows.create({width:170, height:190, type:"popup", url:"basket.html"})
+		if (ev.ctrlKey) {
+			document.getElementById('Hfile').click();
+		}else{
+			chrome.windows.create({width:170, height:190, type:"popup", url:"basket.html"})
+		}
+		
 	},false);
 })();
