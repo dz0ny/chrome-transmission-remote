@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<script type="text/javascript" src="js/torentAdder.js"></script>
+<script type="text/javascript">
+    // global variables
+    var completedTorrents = '',
+        // string of completed torrents to prevent duplicate notifications
+        notificationTimer; // holds the timeout so that it can be cancelled and stopped
+    // send context-menu link to inject.js
+
+    function sendLink(info, tab) {
+        chrome.tabs.sendRequest(tab.id, {
+            url: info.linkUrl
+        });
+    }
+
+    // context menu for forcably sending a link to transmission
+    chrome.contextMenus.create({
+        'title': 'Send link to Transmission',
+        'contexts': ['link'],
+        'onclick': sendLink
+    });
+
+    // format the torrent download link into a valid torrent link
+
+    function formatLink(url) {
+        if ((/kickasstorrents\.com\/torrents/i).test(url)) {
+            url = url.replace(/\/$/i, '.torrent');
+        }
+
+        return url;
+    }
+
+    // send request to the remote Transmission client
+
+    function rpcTransmission(args, method, tag, port) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', localStorage.server + '/rpc', true, localStorage.user, localStorage.pass);
+        xhr.setRequestHeader('X-Transmission-Session-Id', localStorage.sessionId);
+        if (method === 'torrent-add' && window.navigator.appVersion.indexOf("Chrome\/9.0") > 1) {
+			downloadTorrent(JSON.parse("{" + args + "}").filename);
+        } else {
+            if (typeof tag === 'undefined') {
+                xhr.send('{ "arguments": { ' + args + ' }, "method": "' + method + '" }');
+            } else {
+                xhr.send('{ "arguments": { ' + args + ' }, "method": "' + method + '", "tag": ' + tag + ' }');
+            }
+        }
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.getResponseHeader('X-Transmission-Session-Id')) { // re-request with the correct session id
+                    localStorage.sessionId = xhr.getResponseHeader('X-Transmission-Session-Id');
+                    return rpcTransmission(args, method, tag, port);
+                }
+
+                var responseJSON = JSON.parse(xhr.responseText);
+
+ 				if (tag === 10) { // create a notification when a torrent finishes
+                    var notification;
+
+                    for (var i = 0, torrent; torrent = responseJSON.arguments.torrents[i]; ++i) {
+                        if (torrent.status === 16 && torrent.leftUntilDone === 0 && completedTorrents.indexOf(torrent.id) < 0) {
+                            notification = webkitNotifications.createNotification('images/icon48.png', 'Torrent Download Complete', torrent.name + ' has finished downloading.');
+                            notification.show();
+
+                            // hide the notification after 30 seconds
+                            setTimeout(function() {
+                                notification.cancel();
+                            }, '30000');
+
+                            // mark the completed torrent so another notification isn't displayed for it
+                            completedTorrents += torrent.id + ',';
+                        }
+                    }
+                } else if (typeof port !== 'undefined') {
+                    port.postMessage({
+                        args: responseJSON.arguments,
+                        tag: responseJSON.tag
+                    });
+                }
+            }
+        };
+    }
+
+    // receive messages from the popup and injected scripts
+    chrome.extension.onConnect.addListener(function(port) {
+        switch (port.name) {
+        case 'popup':
+            port.onMessage.addListener(function(msg) {
+                switch (msg.method) {
+                case 'torrent-get':
+                case 'session-get':
+                    rpcTransmission(msg.args, msg.method, msg.tag, port);
+                    break;
+                default:
+                    rpcTransmission(msg.args, msg.method);
+                }
+            });
+            break;
+        case 'inject':
+            port.onMessage.addListener(function(msg) {
+                var dirs = JSON.parse(localStorage.dirs);
+
+                // check if custom download location is enabled
+                if (localStorage.dLocation === 'dlcustom' && dirs.length > 0) {
+                    if (typeof msg.dir === 'undefined') { // need a download location
+                        port.postMessage({
+                            url: msg.url,
+                            dirs: dirs,
+                            method: 'customdl'
+                        });
+                    } else {
+                        rpcTransmission('"filename": "' + formatLink(msg.url) + '", "download-dir": "' + msg.dir + '"', msg.method);
+                    }
+                } else {
+                    rpcTransmission('"filename": "' + formatLink(msg.url) + '"', msg.method);
+                }
+            });
+            break;
+        case 'options':
+            port.onMessage.addListener(function(msg) {
+                // stop the notification timer
+                clearTimeout(notificationTimer);
+
+                // start it up again if it's enabled
+                if (msg.notifications) notificationRefresh();
+            });
+            break;
+        }
+    });
+
+    // show notifications when a torrent completes (30s timer)
+
+    function notificationRefresh() {
+        rpcTransmission('"fields": [ "id", "name", "status", "leftUntilDone" ], "ids": "recently-active"', 'torrent-get', 10);
+
+        notificationTimer = setTimeout(notificationRefresh, 30000);
+    }
+
+    // only display notifications and keep-alive if it's enabled
+    if (localStorage.notifications === 'true') {
+        notificationRefresh();
+    }
+
+    // first time users and new upgraders
+    if (typeof localStorage.verConfig === 'undefined' || localStorage.verConfig < 2) chrome.tabs.create({
+        url: 'options.html'
+    });
+
+
+</script>

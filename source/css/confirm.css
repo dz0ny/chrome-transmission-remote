@@ -1,0 +1,32 @@
+HTML, BODY
+{
+	margin: 0;
+	padding: 0;
+	-webkit-user-select: none;
+	background: #F8FCFE;
+	width: 100%;
+	height: 100%;
+	overflow: none;
+}
+#centerv
+{
+	display: -webkit-box;
+	-webkit-box-align: center;
+	-webkit-box-orient: vertical;
+	-webkit-box-flex: 1;
+}
+#centerh
+{
+	display: -webkit-box;
+	-webkit-box-align: center;
+	-webkit-box-orient: horizontal;
+	-webkit-box-flex: 1;
+}
+#footer
+{
+	position: fixed;
+	bottom: 0px;
+	height: 40px;
+	width: 100%;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAA7CAIAAAA1lncVAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAGNJREFUeNpcTbsOgDAIhEtM//+nXFzcTYxfoU6chRKrHcgB98K2HzivGyQhIjGkI3P//vnj33vQOt93RwXNIFp9lTNa+wU2Tc/UxNYpzmWXhifv7B3zXeP5oU2+TAXrMj8CDAA+VFkbUEmEBAAAAABJRU5ErkJggg==);
+}

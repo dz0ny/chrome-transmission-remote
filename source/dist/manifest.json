@@ -1,0 +1,23 @@
+{
+   "background_page": "background.html",
+   "browser_action": {
+      "default_icon": "images/icon32.png",
+      "popup": "popup.html"
+   },
+   "content_scripts": [ {
+      "all_frames": true,
+      "js": [ "js/inject.js" ],
+      "matches": [ "http://*/*", "https://*/*" ]
+   } ],
+   "description": "Download and manage torrents on a remote Transmission client.",
+   "icons": {
+      "128": "images/icon128.png",
+      "16": "images/icon16.png",
+      "32": "images/icon32.png",
+      "48": "images/icon48.png"
+   },
+   "name": "Remote Transmission (patched)",
+   "options_page": "options.html",
+   "permissions": [ "http://*/", "https://*/", "contextMenus", "notifications", "tabs" ],
+   "version": "0.9.8.1"
+}
