@@ -1,6 +1,7 @@
 // global variables
 var port = chrome.extension.connect({ name: 'inject' }),
 	customDLElem, torrentURL,
+	added = false,
 	searchPattern = /(^magnet:|\.torrent$|torrents\.php\?action=download|\?.*info_hash=|(bt-chat\.com|torrentreactor\.net|vertor\.com|seedpeer\.com|torrentzap\.com|limetorrents\.com|h33t\.com|ahashare\.com|1337x\.org|bitenova\.nl|bibliotik\.org).*download|alivetorrents\.com\/dl\/|newtorrents\.info\/down\.php|mininova\.org\/get|kickasstorrents\.com\/torrents)/i;
 
 // attach clickTorrent as an onclick event on links that are found to be torrents
@@ -9,6 +10,11 @@ function findTorrentLinks() {
 
 	for (var i = 0, link; link = links[i]; ++i) {
 		if (searchPattern.test(link.href)) {
+			if (!added) {
+				// create the custom download location element
+				createCustomDLElem();
+				added = true;
+			};
 			link.addEventListener('click', clickTorrent, true);
 		}
 	}
@@ -162,5 +168,4 @@ port.onMessage.addListener(function(msg) {
 findTorrentLinks();
 document.addEventListener('load', findTorrentLinks, true);
 
-// create the custom download location element
-createCustomDLElem();
+
