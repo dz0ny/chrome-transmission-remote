@@ -20,7 +20,7 @@ function Torrent() {
 
 	// test the torrent name against the current filter and set whether it's visible or not
 	this.filter = function(order) {
-		var filter = (localStorage.torrentFilter === '') ? '' : new RegExp(localStorage.torrentFilter.replace(/ /g, '[^A-z0-9]*'), 'i'),
+		var filter = (localStorage.torrentFilter === '' || typeof localStorage.torrentFilter === 'undefined') ? '' : new RegExp(localStorage.torrentFilter.replace(/ /g, '[^A-z0-9]*'), 'i'),
 			type = localStorage.torrentType,
 			listElem = document.getElementById('list'), hiddenListElem = document.getElementById('list_hidden');
 
