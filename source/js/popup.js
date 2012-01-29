@@ -170,7 +170,7 @@ function refreshPopup() {
 (function() {
 	// persistent torrent type dropdown and filter textbox
 	document.getElementById('filter_type').value = localStorage.torrentType;
-	if (localStorage.torrentFilter !== '') {
+	if (localStorage.torrentFilter !== '' && typeof localStorage.torrentFilter !== 'undefined') {
 		document.getElementById('filter_input').value = localStorage.torrentFilter;
 		document.getElementById('filter_clear').style.display = 'block';
 	}
