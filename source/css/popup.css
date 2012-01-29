@@ -14,6 +14,7 @@ body {
 	color: #222;
 	cursor: default;
 	-khtml-user-select: none;
+	min-height: 90px;
 }
 
 input, select {
